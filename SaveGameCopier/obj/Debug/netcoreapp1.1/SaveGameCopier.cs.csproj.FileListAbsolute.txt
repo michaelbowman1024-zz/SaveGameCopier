@@ -1,8 +1,0 @@
-C:\_source\Personal\SaveGameCopier.cs\SaveGameCopier.cs\bin\Debug\netcoreapp1.1\SaveGameCopier.cs.deps.json
-C:\_source\Personal\SaveGameCopier.cs\SaveGameCopier.cs\bin\Debug\netcoreapp1.1\SaveGameCopier.cs.runtimeconfig.json
-C:\_source\Personal\SaveGameCopier.cs\SaveGameCopier.cs\bin\Debug\netcoreapp1.1\SaveGameCopier.cs.runtimeconfig.dev.json
-C:\_source\Personal\SaveGameCopier.cs\SaveGameCopier.cs\bin\Debug\netcoreapp1.1\SaveGameCopier.cs.dll
-C:\_source\Personal\SaveGameCopier.cs\SaveGameCopier.cs\obj\Debug\netcoreapp1.1\SaveGameCopier.cs.AssemblyInfo.cs
-C:\_source\Personal\SaveGameCopier.cs\SaveGameCopier.cs\bin\Debug\netcoreapp1.1\SaveGameCopier.cs.pdb
-C:\_source\Personal\SaveGameCopier.cs\SaveGameCopier.cs\obj\Debug\netcoreapp1.1\SaveGameCopier.cs.dll
-C:\_source\Personal\SaveGameCopier.cs\SaveGameCopier.cs\obj\Debug\netcoreapp1.1\SaveGameCopier.cs.pdb
