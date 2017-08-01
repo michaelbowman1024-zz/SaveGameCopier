@@ -1,66 +1,95 @@
 ﻿using System;
 using System.IO;
-using System.Security.Principal;
+using System.Linq;
 
-namespace SaveGameCopier.cs
+namespace SaveGameCopier
 {
     internal class Program
     {
-        private static void Main(string[] args)
+        private static void Main()
         {
             Console.WriteLine("Please specify the user to copy games from:");
-            var fromUser = Console.ReadLine();
+            string fromUser = Console.ReadLine();
             Console.WriteLine("Please specify the user to copy games to:");
-            var toUser = Console.ReadLine();
+            string toUser = Console.ReadLine();
             Console.WriteLine("Please choose which game's save files you would like copied:");
             Console.WriteLine("1 - Borderlands");
-            Console.WriteLine("2 = Borderlands 2");
-            string gameName = Console.ReadLine();
+            Console.WriteLine("2 - Borderlands 2");
+            Console.WriteLine("3 - Rocket League");
+            int.TryParse(Console.ReadLine(), out int gameSelection);
+
+            var pathDef = new PathDefinitions();
+            string savePath = pathDef._definitions.FirstOrDefault(p => p.Key == (PathDefinitions.GameNames)gameSelection).Value;
+            if (savePath == null)
+            {
+                Console.WriteLine("The name provided does not match the currently supported games. Please try again.");
+                Console.ReadKey();
+                Environment.Exit(13);
+            }
+
+            string fromPath = $"C:\\Users\\{ fromUser }\\Documents\\My Games\\{ savePath }";
+            string toPath = $"C:\\Users\\{ toUser }\\Documents\\My Games\\{ savePath }";
+
+            var fromDir = new DirectoryInfo(fromPath);
+            var toDir = new DirectoryInfo(toPath);
+
+            string fromBackupDir = fromDir + "\\Backup\\";
+            string toBackupDir = toDir + "\\Backup\\";
+
+            if (!Directory.Exists(fromDir.ToString()))
+            {
+                Console.WriteLine("The save folder does not exist, or the incorrect game was chosen. Please try again.");
+                Console.ReadKey();
+                Environment.Exit(13);
+            }
+            FileInfo[] fromFiles = fromDir.GetFiles("*", SearchOption.AllDirectories);
+
+            if (!Directory.Exists(toDir.ToString()))
+            {
+                Directory.CreateDirectory(toDir.ToString());
+            }
+            FileInfo[] toFiles = toDir.GetFiles("*", SearchOption.AllDirectories);
+
+            if (!Directory.Exists(fromBackupDir))
+            {
+                Directory.CreateDirectory(fromBackupDir);
+            }
+
+            if (!Directory.Exists(toBackupDir))
+            {
+                Directory.CreateDirectory(toBackupDir);
+            }
+
             Console.WriteLine("Backing up data...");
 
-            gameName = gameName == "1" ? "Borderlands" : "Borderlands 2";
-
-            string firstPath = $"C:\\Users\\{ fromUser }\\Documents\\My Games\\{ gameName }\\SaveData";
-            string secondPath = $"C:\\Users\\{ toUser }\\Documents\\My Games\\{ gameName }\\SaveData";
-
-            var firstDir = new DirectoryInfo(firstPath);
-            var secondDir = new DirectoryInfo(secondPath);
-            string firstBackupDir = firstDir + "\\Backup\\";
-            string secondBackupDir = secondDir + "\\Backup\\";
-            FileInfo[] firstFiles = firstDir.GetFiles();
-            FileInfo[] secondFiles = secondDir.GetFiles();
-
-            if (!Directory.Exists(firstBackupDir))
+            foreach (var file in toFiles)
             {
-                Directory.CreateDirectory(firstBackupDir);
-            }
-
-            if (!Directory.Exists(secondBackupDir))
-            {
-                Directory.CreateDirectory(secondBackupDir);
-            }
-
-            foreach (var file in firstFiles)
-            {
-                if (File.Exists($"{ firstBackupDir }{ file.Name }"))
+                if (File.Exists($"{ toBackupDir }{ file.Name }"))
                 {
-                    File.Delete($"{ firstBackupDir }{ file.Name }");
+                    File.Delete($"{ toBackupDir }{ file.Name }");
                 }
-                file.CopyTo($"{ firstBackupDir }{ file.Name }");
-                Console.WriteLine($"Backed up { file.Name } to { firstBackupDir }.");
+                file.CopyTo($"{ toBackupDir }{ file.Name }");
+                Console.WriteLine($"Backed up { file.Name } to { toBackupDir }.");
             }
 
-            foreach (var file in secondFiles)
+            foreach (var file in fromFiles)
             {
-                if (File.Exists($"{ secondBackupDir }{ file.Name }"))
+                if (File.Exists($"{ fromBackupDir }{ file.Name }"))
                 {
-                    File.Delete($"{ secondBackupDir }{ file.Name }");
+                    File.Delete($"{ fromBackupDir }{ file.Name }");
                 }
-                file.CopyTo($"{ secondBackupDir }{ file.Name }");
-                Console.WriteLine($"Backed up { file.Name } to { secondBackupDir }.");
+                file.CopyTo($"{ fromBackupDir }{ file.Name }");
+                Console.WriteLine($"Backed up { file.Name } to { fromBackupDir }.");
+
+                if (File.Exists($"{ toDir }{ file.Name }"))
+                {
+                    File.Delete($"{ toDir }{ file.Name }");
+                }
+                file.CopyTo($"{ toDir }{ file.Name }");
+                Console.WriteLine($"Copied { file.Name } from { fromDir } to { toDir }.");
             }
 
-            Console.WriteLine("Backup completed!");
+            Console.WriteLine("Operation complete.");
 
             Console.ReadKey();
         }
